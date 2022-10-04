@@ -1,0 +1,85 @@
+diff '--color=auto' -ruN ossian-v.1.3/scripts/main/Utterance.py oss/scripts/main/Utterance.py
+--- ossian-v.1.3/scripts/main/Utterance.py	2014-11-21 18:01:45.000000000 +0200
++++ oss/scripts/main/Utterance.py	2022-05-23 12:09:09.904409738 +0300
+@@ -13,7 +13,9 @@
+ from lxml import etree
+ from lxml.etree import * 
+ from naive.naive_util import *   ## now includes helper functions: fix_data_type, final_attribute_name
+-  
++
++from processors.phoneConversions import conversions
++
+ import default.const as c
+ 
+ #    See  http://lxml.de/1.3/element_classes.html on using custom Element classes:
+@@ -209,6 +211,7 @@
+                 string_data = text[0]
+             else:
+                 string_data = ' '.join(text)
++            string_data = conversions(string_data)
+                 
+ 
+             self.make_from_string(string_data, speech_file=speech_file)
+diff '--color=auto' -ruN ossian-v.1.3/scripts/processors/phoneConversions.py oss/scripts/processors/phoneConversions.py
+--- ossian-v.1.3/scripts/processors/phoneConversions.py	1970-01-01 03:00:00.000000000 +0300
++++ oss/scripts/processors/phoneConversions.py	2022-05-23 12:09:09.905409728 +0300
+@@ -0,0 +1,36 @@
++# -*- coding: utf-8 -*-
++import re
++
++def conversions(contents):
++    beginning_patterns = ['ce', 'ci', 'c', 'qu', 'q', 'w', 'x', 'y', 'zz', 'z', 'ž',
++                          'Ce', 'Ci', 'C', 'Qu', 'Q', 'W', 'X', 'Y', 'Zz', 'Z', 'Ž',
++                          'üüa', 'üüe', 'üüo', 'üüu', 'üüja',
++                          '  ']
++    beginning_patterns = [item.decode('utf-8') for item in beginning_patterns]
++    new_patterns = ['tse', 'tsi', 'k', 'kv', 'k', 'v', 'ks', 'i', 'ts', 's', 'š',
++                    'Tse', 'Tsi', 'K', 'Kv', 'K', 'V', 'Ks', 'I', 'Ts', 'S', 'Š',
++                    'üija', 'üije', 'üijo', 'üiju', 'üija',
++                    ' ']
++    new_patterns = [item.decode('utf-8') for item in new_patterns]
++
++    i = 0
++    for beginning_pattern in beginning_patterns:
++        pattern = re.compile(beginning_pattern)
++        contents = pattern.sub(new_patterns[i], contents)
++        i += 1
++
++    vowels_i_patterns = re.compile(r'[aeiouõäöüAEIOUÕÄÖÜ]'.decode('utf-8')+'i'.decode('utf-8')+'[aeiouõäöü]'.decode('utf-8'))
++    patterns = vowels_i_patterns.finditer(contents)
++    i = 0
++    for pattern in patterns:
++        contents = contents[:pattern.start()+2+i]+'j'+contents[pattern.start()+2+i:]
++        i += 1
++
++    vowels_u_patterns = re.compile(r'[aeiouõäöüAEIOUÕÄÖÜ]'.decode('utf-8') + 'u'.decode('utf-8') + '[aeiouõäöü]'.decode('utf-8'))
++    patterns = vowels_u_patterns.finditer(contents)
++    i = 0
++    for pattern in patterns:
++        contents = contents[:pattern.start() + 2 + i] + 'w' + contents[pattern.start() + 2 + i:]
++        i += 1
++
++    return contents
+\ No newline at end of file
+diff '--color=auto' -ruN ossian-v.1.3/scripts/speak.py oss/scripts/speak.py
+--- ossian-v.1.3/scripts/speak.py	2014-11-26 11:56:00.000000000 +0200
++++ oss/scripts/speak.py	2022-05-23 12:08:11.289995506 +0300
+@@ -19,6 +19,7 @@
+ import logging
+ logging.basicConfig()  ##level=logging.DEBUG
+ 
++from processors.phoneConversions import conversions
+ 
+ def main_work():
+ 
+@@ -87,7 +88,9 @@
+     # An empty line marks the change of paragraphs in plain text files
+     for line in fileinput.input(opts.files):
+        line = line.decode('utf-8').rstrip()
+-       print line
++       line = conversions(line)
++       print line.encode('utf-8')
++       
+        if fileinput.isfirstline():
+            if para != []:
+                voice.synth_utterance(''.join(para), output_wavefile=output_wavefile, \

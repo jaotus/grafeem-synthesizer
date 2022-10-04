@@ -1,0 +1,7 @@
+configobj==5.0.6
+regex==2019.12.9
+lxml==4.4.2
+numpy==1.9.1
+scipy==0.14.0
+scikit-learn==0.15.2
+

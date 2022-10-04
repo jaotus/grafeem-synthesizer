@@ -1,0 +1,17 @@
+name: ossian
+channels:
+  - anaconda
+dependencies:
+  - python=2.7
+  - pip
+  - numpy
+  - scipy
+  - regex
+  - lxml
+  - scikit-learn
+  - configobj
+  - theano
+  - matplotlib
+  - pip:
+      - bandmat
+      - argparse

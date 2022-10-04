@@ -1,0 +1,17 @@
+name: ossian
+channels:
+  - anaconda
+dependencies:
+  - python=2.7
+  - pip=19.3.1
+  - configobj
+  - regex
+  - lxml
+  - numpy==1.9.3
+  - scipy
+  - scikit-learn
+#  - pip:
+#    - numpy==1.9.1
+#    - scipy==0.14.0
+#    - scikit-learn==0.15.2
+
