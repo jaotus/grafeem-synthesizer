@@ -1,4 +1,4 @@
-# Build scripts for Docker images of the _dnn/hmm grafeem_ synthesizers
+# Build scripts for Docker images of the _dnn/hmm_ grapheme based speech synthesizers
 
 Create docker images for an Ossian based speech synthesizer.
 
@@ -40,7 +40,9 @@ The build scripts assume that you have
 
 ## Train a tiny voice
 
-`test-train.sh` will use the image __dnn-grafeem-train__ to train a sample voice.
+`test-train.sh` will use the image __dnn-
+
+eem-train__ to train a sample voice.
 `test-train-hmm.sh` will use the image __hmm-grafeem-train__ to train a sample voice.
 
 Conda versions can be tested by adding `conda` parameter:
