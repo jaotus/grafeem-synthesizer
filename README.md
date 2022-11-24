@@ -40,9 +40,7 @@ The build scripts assume that you have
 
 ## Train a tiny voice
 
-`test-train.sh` will use the image __dnn-
-
-eem-train__ to train a sample voice.
+`test-train.sh` will use the image __dnn-greem-train__ to train a sample voice.
 `test-train-hmm.sh` will use the image __hmm-grafeem-train__ to train a sample voice.
 
 Conda versions can be tested by adding `conda` parameter:
